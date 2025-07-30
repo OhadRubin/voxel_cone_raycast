@@ -23,6 +23,9 @@ export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
 
 export class VoxelVisibility {
   constructor(config, worldProvider) {
+    // config.voxelSize: Size of each voxel in world units
+    // config.worldOriginOffset: Where voxel coordinate (0,0,0) maps to in world space
+    //   This offsets the voxel grid coordinate system relative to world coordinates
     this.config = config;
     this.world = worldProvider;
   }
@@ -31,6 +34,10 @@ export class VoxelVisibility {
   
   // Trace a single ray and yield visible voxels
   *traceRayHelper(origin, direction, maxDistance) {
+    // origin: Starting point of ray in world coordinates (e.g., sensor position)
+    // direction: Ray direction vector (normalized)
+    // maxDistance: Maximum ray length in world units
+    
     // Get starting voxel
     let current = this.world.worldToVoxel(origin);
     
@@ -40,10 +47,11 @@ export class VoxelVisibility {
     const stepZ = direction.z > 0 ? 1 : -1;
     
     // Calculate t values for next voxel boundaries
+    // Convert voxel boundary indices to world coordinates using the world origin offset
     const voxelSize = this.config.voxelSize;
-    const nextVoxelBoundaryX = (current.x + (stepX > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.x;
-    const nextVoxelBoundaryY = (current.y + (stepY > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.y;
-    const nextVoxelBoundaryZ = (current.z + (stepZ > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.z;
+    const nextVoxelBoundaryX = (current.x + (stepX > 0 ? 1 : 0)) * voxelSize + this.config.worldOriginOffset.x;
+    const nextVoxelBoundaryY = (current.y + (stepY > 0 ? 1 : 0)) * voxelSize + this.config.worldOriginOffset.y;
+    const nextVoxelBoundaryZ = (current.z + (stepZ > 0 ? 1 : 0)) * voxelSize + this.config.worldOriginOffset.z;
     
     // Calculate t values
     let tMaxX = direction.x !== 0 ? (nextVoxelBoundaryX - origin.x) / direction.x : Infinity;

@@ -13,10 +13,10 @@ import useFpsCounter from './hooks/useFpsCounter';
 
 const App = () => {
   const [cone, setCone] = useState({
-    origin: { x: 0, y: 5, z: 0 },
-    direction: { x: 0, y: 0, z: 1 },
-    halfAngle: Math.PI / 6,
-    maxRange: 20
+    origin: { x: 0, y: 5, z: 0 },    // Sensor/camera position in world coordinates
+    direction: { x: 0, y: 0, z: 1 }, // Direction sensor is pointing (normalized vector)
+    halfAngle: Math.PI / 6,          // 30-degree cone half-angle (full cone is 60°)
+    maxRange: 20                     // Maximum visibility distance in world units
   });
   
   const [showRays, setShowRays] = useState(false);
@@ -28,8 +28,11 @@ const App = () => {
   
   const visibility = useRef(null);
   const totalRotationRef = useRef(0);
-  const voxelSize = 1;
-  const gridSize = 100;
+  
+  // World/Voxel Configuration
+  const voxelSize = 1;    // Each voxel is 1x1x1 world units
+  const gridSize = 100;   // 100x100x100 voxel grid
+  // Note: Voxel coordinates (0,0,0) to (99,99,99) map to world coordinates (-50,-50,-50) to (49,49,49)
   
   const { fps, updateFpsCounter } = useFpsCounter();
   
@@ -111,10 +114,12 @@ const App = () => {
     const worldProvider = new WorldProvider(config);
     const visibilityConfig = {
       voxelSize: voxelSize,
-      robotPosition: {
-        x: -gridSize * voxelSize / 2,
-        y: 0,
-        z: -gridSize * voxelSize / 2
+      // worldOriginOffset: Maps voxel coordinate (0,0,0) to this world position
+      // This centers the voxel grid around world origin (0,0,0)
+      worldOriginOffset: {
+        x: -gridSize * voxelSize / 2,  // Center X axis: voxel grid spans -50 to +49
+        y: 0,                          // Y starts at ground level 
+        z: -gridSize * voxelSize / 2   // Center Z axis: voxel grid spans -50 to +49
       }
     };
     visibility.current = new VoxelVisibility(visibilityConfig, worldProvider);
