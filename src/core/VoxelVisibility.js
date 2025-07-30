@@ -19,6 +19,13 @@ export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
   return totalRays;
 }
 
+
+// export class ConeRayIterator {
+//   constructor(cone, rayCount) {
+    
+//   }
+// }
+
 export class VoxelVisibility {
   constructor(config) {
     this.config = config;
@@ -129,10 +136,8 @@ export class VoxelVisibility {
     return true;
   }
   
-  // Trace a single ray and collect visible voxels
-  traceRay(origin, direction, maxDistance) {
-    const visibleVoxels = [];
-    
+  // Trace a single ray and yield visible voxels
+  *traceRayHelper(origin, direction, maxDistance) {
     // Get starting voxel
     let current = this.worldToVoxel(origin);
     
@@ -161,8 +166,8 @@ export class VoxelVisibility {
     
     // Traverse voxels
     while (this.isInBounds(current.x, current.y, current.z) && distance < maxDistance) {
-      // Add visible voxel
-      visibleVoxels.push({ x: current.x, y: current.y, z: current.z });
+      // Yield visible voxel
+      yield { x: current.x, y: current.y, z: current.z };
       
       // Check if current voxel blocks further visibility
       if (this.voxelData[this.getIndex(current.x, current.y, current.z)]) {
@@ -183,21 +188,22 @@ export class VoxelVisibility {
         distance = tMaxZ * voxelSize;
         tMaxZ += tDeltaZ;
       }
-    }
-    
-    return visibleVoxels;
+    } 
+  }
+
+  // Trace a single ray and collect visible voxels
+  traceRay(origin, direction, maxDistance) {
+    return Array.from(this.traceRayHelper(origin, direction, maxDistance));
   }
   
-  generateConeRays(cone, rayCount) {
-    const rays = [];
-    
-    // Always add center ray
-    rays.push({
+  *generateConeRays(cone, rayCount) {
+    // Always yield center ray first
+    yield {
       origin: cone.origin,
       direction: cone.direction
-    });
+    };
     
-    if (rayCount <= 1) return rays;
+    if (rayCount <= 1) return;
     
     // Calculate how many rays we've allocated so far
     let raysRemaining = rayCount - 1;
@@ -263,32 +269,33 @@ export class VoxelVisibility {
           z: cone.direction.z * Math.cos(ringAngle) + ringDir.z * Math.sin(ringAngle)
         };
         
-        rays.push({
+        yield {
           origin: cone.origin,
           direction: rayDir
-        });
+        };
       }
       
       raysRemaining -= raysInRing;
       currentRadius += radialStep;
     }
-    
-    return rays;
   }
   
-  getVisibleVoxelsInCone(cone, rayCount) {
-    const rays = this.generateConeRays(cone, rayCount);
-    const visibleSet = new Map(); // Use map to avoid duplicates
+  *getVisibleVoxelsInConeHelper(cone, rayCount) {
+    const visibleSet = new Set(); // Track visited voxels to avoid duplicates
     
-    for (const ray of rays) {
-      const voxels = this.traceRay(ray.origin, ray.direction, cone.maxRange);
-      for (const voxel of voxels) {
+    for (const ray of this.generateConeRays(cone, rayCount)) {
+      for (const voxel of this.traceRayHelper(ray.origin, ray.direction, cone.maxRange)) {
         const key = `${voxel.x},${voxel.y},${voxel.z}`;
-        visibleSet.set(key, voxel);
+        if (!visibleSet.has(key)) {
+          visibleSet.add(key);
+          yield voxel;
+        }
       }
     }
-    
-    return Array.from(visibleSet.values());
+  }
+
+  getVisibleVoxelsInCone(cone, rayCount) {
+    return Array.from(this.getVisibleVoxelsInConeHelper(cone, rayCount));
   }
   
   setVoxelOpaque(x, y, z, opaque) {

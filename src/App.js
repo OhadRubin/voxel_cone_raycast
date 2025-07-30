@@ -28,7 +28,7 @@ const App = () => {
   const visibility = useRef(null);
   const totalRotationRef = useRef(0);
   const voxelSize = 1;
-  const gridSize = 150;
+  const gridSize = 100;
   
   const { fps, updateFpsCounter } = useFpsCounter();
   
