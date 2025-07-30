@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { VoxelVisibility } from '../core/VoxelVisibility';
+import { VoxelVisibility, calculateRayCountForDistance } from '../core/VoxelVisibility';
 
 const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => {
   const mountRef = useRef(null);
@@ -234,7 +234,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => 
     rayLinesRef.current = [];
     
     if (showRays) {
-      const rayCount = VoxelVisibility.calculateRayCountForDistance(
+      const rayCount = calculateRayCountForDistance(
         cone.maxRange,
         cone.halfAngle,
         visibility.config.voxelSize

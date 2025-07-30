@@ -48,7 +48,7 @@ const App = () => {
     // Clear existing pillars (keep walls intact)
     // We need to clear the entire voxel data and rebuild everything
     // since we can't easily identify which voxels are pillars vs walls
-    visibility.current.voxelData.fill(false);
+    visibility.current.world.voxelData.fill(false);
     let obstacles = 0;
     
     // Rebuild walls (same as initial setup)
