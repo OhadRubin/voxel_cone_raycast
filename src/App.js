@@ -59,8 +59,8 @@ const App = () => {
     
     for (let x = wallStart; x < wallEnd; x++) {
       for (let y = 0; y < wallHeight; y++) {
-        visibility.current.setVoxelOpaque(x, y, wallPosition, true);
-        visibility.current.setVoxelOpaque(wallPosition, y, x, true);
+        visibility.current.world.setVoxelOpaque(x, y, wallPosition, true);
+        visibility.current.world.setVoxelOpaque(wallPosition, y, x, true);
         obstacles += 2;
       }
     }
@@ -75,10 +75,10 @@ const App = () => {
       const x = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
       const z = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
       for (let y = 0; y < pillarHeight; y++) {
-        visibility.current.setVoxelOpaque(x, y, z, true);
-        visibility.current.setVoxelOpaque(x + 1, y, z, true);
-        visibility.current.setVoxelOpaque(x, y, z + 1, true);
-        visibility.current.setVoxelOpaque(x + 1, y, z + 1, true);
+        visibility.current.world.setVoxelOpaque(x, y, z, true);
+        visibility.current.world.setVoxelOpaque(x + 1, y, z, true);
+        visibility.current.world.setVoxelOpaque(x, y, z + 1, true);
+        visibility.current.world.setVoxelOpaque(x + 1, y, z + 1, true);
         obstacles += 4;
       }
     }
@@ -129,8 +129,8 @@ const App = () => {
     
     for (let x = wallStart; x < wallEnd; x++) {
       for (let y = 0; y < wallHeight; y++) {
-        visibility.current.setVoxelOpaque(x, y, wallPosition, true);
-        visibility.current.setVoxelOpaque(wallPosition, y, x, true);
+        visibility.current.world.setVoxelOpaque(x, y, wallPosition, true);
+        visibility.current.world.setVoxelOpaque(wallPosition, y, x, true);
         obstacles += 2;
       }
     }
@@ -145,10 +145,10 @@ const App = () => {
       const x = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
       const z = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
       for (let y = 0; y < pillarHeight; y++) {
-        visibility.current.setVoxelOpaque(x, y, z, true);
-        visibility.current.setVoxelOpaque(x + 1, y, z, true);
-        visibility.current.setVoxelOpaque(x, y, z + 1, true);
-        visibility.current.setVoxelOpaque(x + 1, y, z + 1, true);
+        visibility.current.world.setVoxelOpaque(x, y, z, true);
+        visibility.current.world.setVoxelOpaque(x + 1, y, z, true);
+        visibility.current.world.setVoxelOpaque(x, y, z + 1, true);
+        visibility.current.world.setVoxelOpaque(x + 1, y, z + 1, true);
         obstacles += 4;
       }
     }

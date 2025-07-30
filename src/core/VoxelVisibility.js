@@ -191,9 +191,7 @@ export class VoxelVisibility {
     return Array.from(this.getVisibleVoxelsInConeHelper(cone, rayCount));
   }
   
-  setVoxelOpaque(x, y, z, opaque) {
-    this.world.setVoxelOpaque(x, y, z, opaque);
-  }
+
   
   
     
