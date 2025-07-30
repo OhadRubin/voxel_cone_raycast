@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/voxel_cone_raycast/static/css/main.5ff9ab0a.css",
+    "main.js": "/voxel_cone_raycast/static/js/main.576c6df6.js",
+    "index.html": "/voxel_cone_raycast/index.html",
+    "main.5ff9ab0a.css.map": "/voxel_cone_raycast/static/css/main.5ff9ab0a.css.map",
+    "main.576c6df6.js.map": "/voxel_cone_raycast/static/js/main.576c6df6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5ff9ab0a.css",
+    "static/js/main.576c6df6.js"
+  ]
+}
