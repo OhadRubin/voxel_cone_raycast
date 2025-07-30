@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/voxel_cone_raycast/static/css/main.5ff9ab0a.css",
-    "main.js": "/voxel_cone_raycast/static/js/main.576c6df6.js",
+    "main.css": "/voxel_cone_raycast/static/css/main.bb98bdef.css",
+    "main.js": "/voxel_cone_raycast/static/js/main.3694a6a3.js",
     "index.html": "/voxel_cone_raycast/index.html",
-    "main.5ff9ab0a.css.map": "/voxel_cone_raycast/static/css/main.5ff9ab0a.css.map",
-    "main.576c6df6.js.map": "/voxel_cone_raycast/static/js/main.576c6df6.js.map"
+    "main.bb98bdef.css.map": "/voxel_cone_raycast/static/css/main.bb98bdef.css.map",
+    "main.3694a6a3.js.map": "/voxel_cone_raycast/static/js/main.3694a6a3.js.map"
   },
   "entrypoints": [
-    "static/css/main.5ff9ab0a.css",
-    "static/js/main.576c6df6.js"
+    "static/css/main.bb98bdef.css",
+    "static/js/main.3694a6a3.js"
   ]
 }
