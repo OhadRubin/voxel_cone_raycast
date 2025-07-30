@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 import VoxelScene from './components/VoxelScene';
 import Controls from './components/ui/Controls';
@@ -32,11 +32,13 @@ const App = () => {
   
   const { fps, updateFpsCounter } = useFpsCounter();
   
-  const rayCount = VoxelVisibility.calculateRayCountForDistance(
-    cone.maxRange,
-    cone.halfAngle,
-    voxelSize
-  );
+  const rayCount = useMemo(() => {
+    return VoxelVisibility.calculateRayCountForDistance(
+      cone.maxRange,
+      cone.halfAngle,
+      voxelSize
+    );
+  }, [cone.maxRange, cone.halfAngle, voxelSize]);
   
   // Function to regenerate pillars
   const regeneratePillars = useCallback(() => {
