@@ -151,7 +151,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => 
       for (let y = 0; y < visibility.config.gridSize; y++) {
         for (let z = 0; z < visibility.config.gridSize; z++) {
           const key = `${x},${y},${z}`;
-          const isOpaque = visibility.voxelData[visibility.getIndex(x, y, z)];
+          const isOpaque = visibility.world.isVoxelOpaque(x, y, z);
           const isVisible = visibleSet.has(key);
           
           let mesh = voxelMeshesRef.current.get(key);
@@ -160,7 +160,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => 
           
           if (!mesh) {
             mesh = new THREE.Mesh(geometry);
-            const worldPos = visibility.voxelToWorld(x, y, z);
+            const worldPos = visibility.world.voxelToWorld(x, y, z);
             mesh.position.set(worldPos.x, worldPos.y, worldPos.z);
             mesh.castShadow = true;
             mesh.receiveShadow = true;

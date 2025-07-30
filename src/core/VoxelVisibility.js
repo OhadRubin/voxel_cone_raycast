@@ -1,4 +1,6 @@
 
+import { WorldProvider } from './WorldProvider.js';
+
 export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
   const maxRadius = distance * Math.tan(halfAngle);
   
@@ -19,54 +21,18 @@ export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
   return totalRays;
 }
 
-
-// export class ConeRayIterator {
-//   constructor(cone, rayCount) {
-    
-//   }
-// }
-
 export class VoxelVisibility {
-  constructor(config) {
+  constructor(config, worldProvider) {
     this.config = config;
-    this.voxelData = new Array(config.gridSize ** 3).fill(false);
+    this.world = worldProvider;
   }
   
-  // Convert world position to voxel coordinates
-  worldToVoxel(pos) {
-    return {
-      x: Math.floor(pos.x / this.config.voxelSize + this.config.gridSize / 2),
-      y: Math.floor(pos.y / this.config.voxelSize),
-      z: Math.floor(pos.z / this.config.voxelSize + this.config.gridSize / 2)
-    };
-  }
-  
-  // Convert voxel coordinates to world position (center of voxel)
-  voxelToWorld(x, y, z) {
-    return {
-      x: (x - this.config.gridSize / 2) * this.config.voxelSize + this.config.voxelSize / 2,
-      y: y * this.config.voxelSize + this.config.voxelSize / 2,
-      z: (z - this.config.gridSize / 2) * this.config.voxelSize + this.config.voxelSize / 2
-    };
-  }
-  
-  // Check if voxel coordinates are in bounds
-  isInBounds(x, y, z) {
-    return x >= 0 && x < this.config.gridSize &&
-           y >= 0 && y < this.config.gridSize &&
-           z >= 0 && z < this.config.gridSize;
-  }
-  
-  // Get array index from voxel coordinates
-  getIndex(x, y, z) {
-    return x + y * this.config.gridSize + z * this.config.gridSize * this.config.gridSize;
-  }
 
   
   // Trace a single ray and yield visible voxels
   *traceRayHelper(origin, direction, maxDistance) {
     // Get starting voxel
-    let current = this.worldToVoxel(origin);
+    let current = this.world.worldToVoxel(origin);
     
     // Step direction (1 or -1)
     const stepX = direction.x > 0 ? 1 : -1;
@@ -92,12 +58,12 @@ export class VoxelVisibility {
     let distance = 0;
     
     // Traverse voxels
-    while (this.isInBounds(current.x, current.y, current.z) && distance < maxDistance) {
+    while (this.world.isInBounds(current.x, current.y, current.z) && distance < maxDistance) {
       // Yield visible voxel
       yield { x: current.x, y: current.y, z: current.z };
       
       // Check if current voxel blocks further visibility
-      if (this.voxelData[this.getIndex(current.x, current.y, current.z)]) {
+      if (this.world.isVoxelOpaque(current.x, current.y, current.z)) {
         break; // Hit an opaque voxel, stop tracing
       }
       
@@ -226,9 +192,7 @@ export class VoxelVisibility {
   }
   
   setVoxelOpaque(x, y, z, opaque) {
-    if (this.isInBounds(x, y, z)) {
-      this.voxelData[this.getIndex(x, y, z)] = opaque;
-    }
+    this.world.setVoxelOpaque(x, y, z, opaque);
   }
   
   

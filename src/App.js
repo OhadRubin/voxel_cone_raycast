@@ -6,6 +6,7 @@ import StatsDisplay from './components/ui/StatsDisplay';
 import AnimationControls from './components/ui/AnimationControls';
 
 import { VoxelVisibility, calculateRayCountForDistance } from './core/VoxelVisibility';
+import { WorldProvider } from './core/WorldProvider';
 import { rotateVectorY } from './utils/calculations';
 import useAnimationLoop from './hooks/useAnimationLoop';
 import useFpsCounter from './hooks/useFpsCounter';
@@ -103,10 +104,12 @@ const App = () => {
   
   // Initialize voxel world and obstacles (runs only once)
   useEffect(() => {
-    visibility.current = new VoxelVisibility({
+    const config = {
       voxelSize: voxelSize,
       gridSize: gridSize
-    });
+    };
+    const worldProvider = new WorldProvider(config);
+    visibility.current = new VoxelVisibility(config, worldProvider);
     
     let obstacles = 0;
     
