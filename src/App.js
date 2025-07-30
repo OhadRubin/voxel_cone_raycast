@@ -5,7 +5,7 @@ import Controls from './components/ui/Controls';
 import StatsDisplay from './components/ui/StatsDisplay';
 import AnimationControls from './components/ui/AnimationControls';
 
-import { VoxelVisibility } from './core/VoxelVisibility';
+import { VoxelVisibility, calculateRayCountForDistance } from './core/VoxelVisibility';
 import { rotateVectorY } from './utils/calculations';
 import useAnimationLoop from './hooks/useAnimationLoop';
 import useFpsCounter from './hooks/useFpsCounter';
@@ -28,12 +28,12 @@ const App = () => {
   const visibility = useRef(null);
   const totalRotationRef = useRef(0);
   const voxelSize = 1;
-  const gridSize = 100;
+  const gridSize = 150;
   
   const { fps, updateFpsCounter } = useFpsCounter();
   
   const rayCount = useMemo(() => {
-    return VoxelVisibility.calculateRayCountForDistance(
+    return calculateRayCountForDistance(
       cone.maxRange,
       cone.halfAngle,
       voxelSize

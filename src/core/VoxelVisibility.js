@@ -1,3 +1,24 @@
+
+export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
+  const maxRadius = distance * Math.tan(halfAngle);
+  
+  if (maxRadius < voxelSize / 2) return 1;
+  
+  let totalRays = 1; // Center ray
+  let currentRadius = 0;
+  const radialStep = voxelSize;
+  
+  while (currentRadius < maxRadius) {
+    currentRadius += radialStep;
+    if (currentRadius > maxRadius) currentRadius = maxRadius;
+    
+    const circumference = 2 * Math.PI * currentRadius;
+    const raysInRing = Math.max(1, Math.ceil(circumference / voxelSize));
+    totalRays += raysInRing;
+  }
+  return totalRays;
+}
+
 export class VoxelVisibility {
   constructor(config) {
     this.config = config;
@@ -276,24 +297,7 @@ export class VoxelVisibility {
     }
   }
   
-  static calculateRayCountForDistance(distance, halfAngle, voxelSize) {
-    const maxRadius = distance * Math.tan(halfAngle);
+  
     
-    if (maxRadius < voxelSize / 2) return 1;
-    
-    let totalRays = 1; // Center ray
-    let currentRadius = 0;
-    const radialStep = voxelSize;
-    
-    while (currentRadius < maxRadius) {
-      currentRadius += radialStep;
-      if (currentRadius > maxRadius) currentRadius = maxRadius;
-      
-      const circumference = 2 * Math.PI * currentRadius;
-      const raysInRing = Math.max(1, Math.ceil(circumference / voxelSize));
-      totalRays += raysInRing;
-    }
-    
-    return totalRays;
-  }
+
 }
