@@ -26,6 +26,7 @@ const App = () => {
   const [rotationSpeed, setRotationSpeed] = useState(1.0);
   
   const visibility = useRef(null);
+  const totalRotationRef = useRef(0);
   const voxelSize = 1;
   const gridSize = 100;
   
@@ -37,11 +38,64 @@ const App = () => {
     voxelSize
   );
   
+  // Function to regenerate pillars
+  const regeneratePillars = useCallback(() => {
+    if (!visibility.current) return;
+    
+    // Clear existing pillars (keep walls intact)
+    // We need to clear the entire voxel data and rebuild everything
+    // since we can't easily identify which voxels are pillars vs walls
+    visibility.current.voxelData.fill(false);
+    let obstacles = 0;
+    
+    // Rebuild walls (same as initial setup)
+    const wallStart = Math.floor(gridSize * 0.2);
+    const wallEnd = Math.floor(gridSize * 0.8);
+    const wallHeight = Math.floor(gridSize * 0.2);
+    const wallPosition = Math.floor(gridSize * 0.4);
+    
+    for (let x = wallStart; x < wallEnd; x++) {
+      for (let y = 0; y < wallHeight; y++) {
+        visibility.current.setVoxelOpaque(x, y, wallPosition, true);
+        visibility.current.setVoxelOpaque(wallPosition, y, x, true);
+        obstacles += 2;
+      }
+    }
+    
+    // Generate new pillars
+    const pillarMinPos = Math.floor(gridSize * 0.1);
+    const pillarMaxPos = Math.floor(gridSize * 0.88);
+    const pillarHeight = Math.floor(gridSize * 0.3);
+    const pillarCount = Math.max(3, Math.floor(gridSize / 10));
+    
+    for (let i = 0; i < pillarCount; i++) {
+      const x = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
+      const z = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
+      for (let y = 0; y < pillarHeight; y++) {
+        visibility.current.setVoxelOpaque(x, y, z, true);
+        visibility.current.setVoxelOpaque(x + 1, y, z, true);
+        visibility.current.setVoxelOpaque(x, y, z + 1, true);
+        visibility.current.setVoxelOpaque(x + 1, y, z + 1, true);
+        obstacles += 4;
+      }
+    }
+    
+    setObstacleCount(obstacles);
+  }, [gridSize]);
+  
   const rotateConeCallback = useCallback((deltaTime) => {
     const angle = rotationSpeed * deltaTime;
+    totalRotationRef.current += angle;
+    
+    // Check if we've completed a full 360-degree rotation (2π radians)
+    if (totalRotationRef.current >= 2 * Math.PI) {
+      totalRotationRef.current -= 2 * Math.PI; // Reset counter
+      regeneratePillars(); // Generate new pillars
+    }
+    
     const newDirection = rotateVectorY(cone.direction, angle);
     setCone(prev => ({ ...prev, direction: newDirection }));
-  }, [cone.direction, rotationSpeed]);
+  }, [cone.direction, rotationSpeed, regeneratePillars]);
   
   useAnimationLoop(rotateConeCallback, isAnimating, 1.0);
   
