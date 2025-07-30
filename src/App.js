@@ -109,7 +109,15 @@ const App = () => {
       gridSize: gridSize
     };
     const worldProvider = new WorldProvider(config);
-    visibility.current = new VoxelVisibility(config, worldProvider);
+    const visibilityConfig = {
+      voxelSize: voxelSize,
+      robotPosition: {
+        x: -gridSize * voxelSize / 2,
+        y: 0,
+        z: -gridSize * voxelSize / 2
+      }
+    };
+    visibility.current = new VoxelVisibility(visibilityConfig, worldProvider);
     
     let obstacles = 0;
     
@@ -166,6 +174,7 @@ const App = () => {
           showRays={showRays}
           visibleVoxels={visibleVoxels}
           gridSize={gridSize}
+          voxelSize={voxelSize}
         />
       </div>
       

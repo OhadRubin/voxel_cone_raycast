@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { VoxelVisibility, calculateRayCountForDistance } from '../core/VoxelVisibility';
 
-const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => {
+const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize, voxelSize }) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
@@ -147,9 +147,9 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => 
       transparent: true
     });
     
-    for (let x = 0; x < visibility.config.gridSize; x++) {
-      for (let y = 0; y < visibility.config.gridSize; y++) {
-        for (let z = 0; z < visibility.config.gridSize; z++) {
+    for (let x = 0; x < gridSize; x++) {
+      for (let y = 0; y < gridSize; y++) {
+        for (let z = 0; z < gridSize; z++) {
           const key = `${x},${y},${z}`;
           const isOpaque = visibility.world.isVoxelOpaque(x, y, z);
           const isVisible = visibleSet.has(key);
@@ -237,7 +237,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => 
       const rayCount = calculateRayCountForDistance(
         cone.maxRange,
         cone.halfAngle,
-        visibility.config.voxelSize
+        voxelSize
       );
       
       const rays = visibility.generateConeRays(cone, rayCount);

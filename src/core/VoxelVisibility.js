@@ -41,9 +41,9 @@ export class VoxelVisibility {
     
     // Calculate t values for next voxel boundaries
     const voxelSize = this.config.voxelSize;
-    const nextVoxelBoundaryX = (current.x + (stepX > 0 ? 1 : 0)) * voxelSize - this.config.gridSize * voxelSize / 2;
-    const nextVoxelBoundaryY = (current.y + (stepY > 0 ? 1 : 0)) * voxelSize;
-    const nextVoxelBoundaryZ = (current.z + (stepZ > 0 ? 1 : 0)) * voxelSize - this.config.gridSize * voxelSize / 2;
+    const nextVoxelBoundaryX = (current.x + (stepX > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.x;
+    const nextVoxelBoundaryY = (current.y + (stepY > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.y;
+    const nextVoxelBoundaryZ = (current.z + (stepZ > 0 ? 1 : 0)) * voxelSize + this.config.robotPosition.z;
     
     // Calculate t values
     let tMaxX = direction.x !== 0 ? (nextVoxelBoundaryX - origin.x) / direction.x : Infinity;
