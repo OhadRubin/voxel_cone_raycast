@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Controls = ({ cone, onConeChange, rayCount, voxelSize }) => {
+const Controls = ({ cone, onConeChange, rayCount, voxelSize, gridSize }) => {
   const handleAngleChange = (e) => {
     const newAngle = parseFloat(e.target.value) * Math.PI / 180;
     onConeChange({ ...cone, halfAngle: newAngle });
@@ -32,7 +32,7 @@ const Controls = ({ cone, onConeChange, rayCount, voxelSize }) => {
         <input 
           type="range" 
           min="5" 
-          max="50" 
+          max={gridSize} 
           value={cone.maxRange}
           onChange={handleRangeChange}
           className="w-full"

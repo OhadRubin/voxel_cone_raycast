@@ -27,6 +27,7 @@ const App = () => {
   
   const visibility = useRef(null);
   const voxelSize = 1;
+  const gridSize = 100;
   
   const { fps, updateFpsCounter } = useFpsCounter();
   
@@ -44,37 +45,51 @@ const App = () => {
   
   useAnimationLoop(rotateConeCallback, isAnimating, 1.0);
   
+  // Initialize voxel world and obstacles (runs only once)
   useEffect(() => {
     visibility.current = new VoxelVisibility({
       voxelSize: voxelSize,
-      gridSize: 50
+      gridSize: gridSize
     });
     
     let obstacles = 0;
     
-    for (let x = 10; x < 40; x++) {
-      for (let y = 0; y < 10; y++) {
-        visibility.current.setVoxelOpaque(x, y, 20, true);
-        visibility.current.setVoxelOpaque(20, y, x, true);
+    // Create walls (scaled to grid size)
+    const wallStart = Math.floor(gridSize * 0.2);  // 20% of grid
+    const wallEnd = Math.floor(gridSize * 0.8);    // 80% of grid
+    const wallHeight = Math.floor(gridSize * 0.2); // 20% of grid
+    const wallPosition = Math.floor(gridSize * 0.4); // 40% of grid
+    
+    for (let x = wallStart; x < wallEnd; x++) {
+      for (let y = 0; y < wallHeight; y++) {
+        visibility.current.setVoxelOpaque(x, y, wallPosition, true);
+        visibility.current.setVoxelOpaque(wallPosition, y, x, true);
         obstacles += 2;
       }
     }
     
-    for (let i = 0; i < 5; i++) {
-      const x = Math.floor(Math.random() * 40) + 5;
-      const z = Math.floor(Math.random() * 40) + 5;
-      for (let y = 0; y < 15; y++) {
+    // Create pillars (2x2, scaled to grid size)
+    const pillarMinPos = Math.floor(gridSize * 0.1);  // 10% of grid
+    const pillarMaxPos = Math.floor(gridSize * 0.88); // 88% of grid (leave room for 2x2)
+    const pillarHeight = Math.floor(gridSize * 0.3);  // 30% of grid
+    const pillarCount = Math.max(3, Math.floor(gridSize / 10)); // Scale pillar count with grid size
+    
+    for (let i = 0; i < pillarCount; i++) {
+      const x = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
+      const z = Math.floor(Math.random() * (pillarMaxPos - pillarMinPos)) + pillarMinPos;
+      for (let y = 0; y < pillarHeight; y++) {
         visibility.current.setVoxelOpaque(x, y, z, true);
-        obstacles++;
+        visibility.current.setVoxelOpaque(x + 1, y, z, true);
+        visibility.current.setVoxelOpaque(x, y, z + 1, true);
+        visibility.current.setVoxelOpaque(x + 1, y, z + 1, true);
+        obstacles += 4;
       }
     }
     
     setObstacleCount(obstacles);
-    
-    const visible = visibility.current.getVisibleVoxelsInCone(cone, rayCount);
-    setVisibleVoxels(visible);
-  }, [cone, rayCount]);
+  }, []); // Empty dependency array - runs only once
   
+  // Update visibility when cone changes
   useEffect(() => {
     if (visibility.current) {
       const visible = visibility.current.getVisibleVoxelsInCone(cone, rayCount);
@@ -91,6 +106,7 @@ const App = () => {
           cone={cone}
           showRays={showRays}
           visibleVoxels={visibleVoxels}
+          gridSize={gridSize}
         />
       </div>
       
@@ -99,6 +115,7 @@ const App = () => {
         onConeChange={setCone}
         rayCount={rayCount}
         voxelSize={voxelSize}
+        gridSize={gridSize}
       />
       
       <StatsDisplay 

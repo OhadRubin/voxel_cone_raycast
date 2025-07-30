@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { VoxelVisibility } from '../core/VoxelVisibility';
 
-const VoxelScene = ({ visibility, cone, showRays, visibleVoxels }) => {
+const VoxelScene = ({ visibility, cone, showRays, visibleVoxels, gridSize }) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
@@ -33,10 +33,10 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels }) => {
     directionalLight.castShadow = true;
     directionalLight.shadow.camera.near = 0.1;
     directionalLight.shadow.camera.far = 100;
-    directionalLight.shadow.camera.left = -50;
-    directionalLight.shadow.camera.right = 50;
-    directionalLight.shadow.camera.top = 50;
-    directionalLight.shadow.camera.bottom = -50;
+    directionalLight.shadow.camera.left = -gridSize;
+    directionalLight.shadow.camera.right = gridSize;
+    directionalLight.shadow.camera.top = gridSize;
+    directionalLight.shadow.camera.bottom = -gridSize;
     scene.add(directionalLight);
     
     const camera = new THREE.PerspectiveCamera(
@@ -56,7 +56,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels }) => {
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
     
-    const gridHelper = new THREE.GridHelper(50, 50, 0x999999, 0xcccccc);
+    const gridHelper = new THREE.GridHelper(gridSize, gridSize, 0x999999, 0xcccccc);
     scene.add(gridHelper);
     
     let mouseX = 0, mouseY = 0;
@@ -122,7 +122,7 @@ const VoxelScene = ({ visibility, cone, showRays, visibleVoxels }) => {
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
     };
-  }, []);
+  }, [gridSize]);
   
   useEffect(() => {
     if (!sceneRef.current || !visibility) return;
