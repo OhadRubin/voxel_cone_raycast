@@ -1,5 +1,4 @@
 
-import { WorldProvider } from './WorldProvider.js';
 
 export function calculateRayCountForDistance(distance, halfAngle, voxelSize) {
   const maxRadius = distance * Math.tan(halfAngle);
